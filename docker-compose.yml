@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  surbana_nestapp:
+    container_name: surbana_nestapp
+    image: intelpou/surbana_nestapp:1.0.0
+    build: .
+    ports:
+      - 3000:3000
+    environment:
+      - DB_TYPE=postgres
+      - POSTGRES_HOST=27.74.250.199
+      - POSTGRES_USER=surbana
+      - POSTGRES_PASSWORD=EIyXORyBB6ZrB8U
+      - POSTGRES_DATABASE=surbana_db
+      - POSTGRES_PORT=25432
