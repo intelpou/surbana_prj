@@ -1,8 +1,8 @@
-import { HttpException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, TreeRepository } from 'typeorm';
 import { Location } from './entities/location.entity';
 
 @Injectable()
@@ -15,11 +15,11 @@ export class LocationService {
    */
   constructor(
     @InjectRepository(Location)
-    private readonly locationRepository: Repository<Location>,
+    private readonly locationRepository: TreeRepository<Location>,
   ) {}
 
   /**
-   * This action adds a new location
+   * This action adds a new location.
    * @param createLocationDto 
    * @returns save result
    */
@@ -30,12 +30,37 @@ export class LocationService {
   }
 
   /**
-   * This action returns all location
+   * This action returns all location.
    * @returns Location[]
    */
   findAll(): Promise<Location[]> {
     this.logger.log('Finding all location');
     return this.locationRepository.find();
+  }
+
+  /**
+   * This action returns all nested nodes by the path of a location.
+   * @returns Location[]
+   */
+  async findNestedNodesByPath(location_number: string): Promise<Location[]> {
+    this.logger.log('Finding nested nodes by a location');
+    const location = await this.findOne(location_number);
+    if (!location) {
+      const msg = 'Resource not found';
+      this.logger.error(msg);
+      throw new NotFoundException(msg);
+    }
+    // const data = this.locationRepository.findDescendants(location);
+    const data = this.locationRepository.query(
+      'SELECT * FROM location WHERE path <@ $1',
+      [location.path]
+    );
+    if (!data) {
+      const msg = 'Resource not found';
+      this.logger.error(msg);
+      throw new NotFoundException(msg);
+    }
+    return data;
   }
 
   /**
@@ -47,12 +72,9 @@ export class LocationService {
     this.logger.log('Finding a location');
     const data = this.locationRepository.findOneBy({ location_number });
     if (!data) {
-      const msg = 'Data Not Found';
+      const msg = 'Resource not found';
       this.logger.error(msg);
-      throw new HttpException(
-        msg,
-        404,
-      );
+      throw new NotFoundException(msg);
     }
     return data;
   }
@@ -78,5 +100,31 @@ export class LocationService {
   remove(location_number: string): Promise<DeleteResult> {
     this.logger.log('Removing a location');
     return this.locationRepository.delete(location_number);
+  }
+
+  /**
+   * This action removes a #${location_number} location
+   * @param location_number 
+   * @returns delete result
+   */
+  async removeNestedNodesByPath(location_number: string): Promise<DeleteResult> {
+    this.logger.log('Removing a location');
+    const location = await this.findOne(location_number);
+    if (!location) {
+      const msg = 'Resource not found';
+      this.logger.error(msg);
+      throw new NotFoundException(msg);
+    }
+    // const data = this.locationRepository.findDescendants(location);
+    const data = this.locationRepository.query(
+      'DELETE FROM location WHERE path <@ $1',
+      [location.path]
+    );
+    if (!data) {
+      const msg = 'Resource not found';
+      this.logger.error(msg);
+      throw new NotFoundException(msg);
+    }
+    return data;
   }
 }

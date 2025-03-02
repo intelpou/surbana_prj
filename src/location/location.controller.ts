@@ -7,19 +7,24 @@ import { UpdateLocationDto } from './dto/update-location.dto';
 export class LocationController {
   constructor(private readonly locationService: LocationService) {}
 
-  @Post()
-  create(@Body() createLocationDto: CreateLocationDto) {
-    return this.locationService.create(createLocationDto);
-  }
-
   @Get()
   findAll() {
     return this.locationService.findAll();
   }
 
+  @Post()
+  create(@Body() createLocationDto: CreateLocationDto) {
+    return this.locationService.create(createLocationDto);
+  }
+
   @Get(':location_number')
   findOne(@Param('location_number') location_number: string) {
     return this.locationService.findOne(location_number);
+  }
+
+  @Get('get_tree/:location_number')
+  findNestedNodesByPath(@Param('location_number') location_number: string) {
+    return this.locationService.findNestedNodesByPath(location_number);
   }
 
   @Patch(':location_number')
@@ -30,5 +35,10 @@ export class LocationController {
   @Delete(':location_number')
   remove(@Param('location_number') location_number: string) {
     return this.locationService.remove(location_number);
+  }
+
+  @Delete('delete_tree/:location_number')
+  removeNestedNodesByPath(@Param('location_number') location_number: string) {
+    return this.locationService.removeNestedNodesByPath(location_number);
   }
 }

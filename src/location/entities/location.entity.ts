@@ -9,11 +9,12 @@ export class Location {
 	building: string;
 
   @Column({ type: 'varchar' })
+
 	location_name: string;
 
   @Column({ type: 'int' })
 	area: number;
 
-  @Column({ type: 'varchar' })
+  @Column({ type: 'ltree' })
 	path: string;
 }
