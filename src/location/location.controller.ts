@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseFilters } from '@nestjs/common';
 import { LocationService } from './location.service';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
+import { AllExceptionsFilter } from 'src/util/all-exceptions-filter';
 
 @Controller('location')
+@UseFilters(new AllExceptionsFilter())
 export class LocationController {
   constructor(private readonly locationService: LocationService) {}
 

@@ -5,6 +5,8 @@ import { LocationModule } from './location/location.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { Location } from './location/entities/location.entity';
+import { AllExceptionsFilter } from './util/all-exceptions-filter';
+import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -23,6 +25,12 @@ import { Location } from './location/entities/location.entity';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
 })
 export class AppModule {}
