@@ -8,10 +8,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('Surbana API')
-    .setDescription('The Surbana API description')
+    .setTitle('Luke API')
+    .setDescription('The Luke API description')
     .setVersion('1.0')
-    .addTag('Surbana')
+    .addTag('Intelpou Group')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);

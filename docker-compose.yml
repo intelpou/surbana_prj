@@ -1,9 +1,9 @@
 version: '3.9'
 
 services:
-  surbana_nestapp:
-    container_name: surbana_nestapp
-    image: intelpou/surbana_nestapp:1.0.0
+  luke_nestapp:
+    container_name: luke_nestapp
+    image: intelpou/luke_nestapp:1.0.0
     build: .
     ports:
       - 3000:3000
